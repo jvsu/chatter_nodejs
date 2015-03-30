@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ultra Chat</title>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <style type="text/css">
+    	input{
+    		display:inline-block;
+    	}
+    	#name{
+    		width:200px;
+        height:33px;
+    	}
+    	#user{
+    		/*Center the form and Header*/
+    		margin-left: auto;
+    		margin-right: auto;
+    		width: 70%;
+    	}
+    	.ubox{
+    		border:1px solid black;
+    		width:200px;
+    		height:200px;
+    		display:inline-block;
+    		vertical-align: top;
+    		margin:10px;
+    	}
+      #form{
+        width: 25%;
+        margin: 0 auto;
+        margin-top:150px;
+  
+      }
+      #submit{
+        display:inline-block;
+      }
+      h1{
+        color:#66CCFF;
+        margin-bottom:20px;
+      }
+
+    </style>
+
+    <script>
+    	io= io.connect();
+    	$(document).on('click','#submit',function(){
+    		var name = $('#name').val();
+    		io.emit('new_user',{user_name:name});
+    	});
+
+ 
+    </script>
+
+  </head>
+  <body>
+  	<div id='form'>
+  		<h1>Ultra Chat</h1>
+	  	<form action='/new_user' method='post' >
+	  		<input id='name' type='text' name='name' Placeholder='Enter Name Here'>
+	  		<input type='submit' name='Submit' id='submit' class='btn btn-info'>
+	  	</form>
+  	</div>
+  	<div id='chatter'>
+  		<div id='user_box'></div>
+
+  		</div>
+  	
+  </body>
+</html>

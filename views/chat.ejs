@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ultra Chat</title>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+      <style type="text/css">
+          .ubox{
+                border:1px solid #E0E0E0 ;
+                width:200px;
+                height:200px;
+                display:inline-block;
+                vertical-align: top;
+                margin:10px;
+                overflow: auto;
+              }
+          .current_user{
+              width: 20%;
+              margin: 0 auto;
+              border:1px solid #E0E0E0;
+              text-transform: capitalize;
+
+          }
+          .user_title{
+              color:white;
+              background-color: #66CCFF;
+              padding: 10px;
+              text-transform: capitalize;
+
+          }
+          #msubmit{
+            display:block;
+            margin-left:auto;
+            margin-right:auto;
+            margin-top:5px;
+            margin-bottom:5px;
+          }
+          #umessage{
+            height:30px;
+            width:250px;
+            display:block;
+            margin-left: auto;
+            margin-right: auto;
+            border-color:#E0E0E0;
+          }
+          #message{
+            margin-left: auto;
+            margin-right: auto;
+            width: 10em;
+            overflow: auto;
+            height:100px;
+          }
+          .user_messages{
+            margin-left: auto;
+            margin-right: auto;
+            width: 10em;
+          }
+          h1{
+              margin-left:10px;
+              color:#66CCFF;
+              width:300px;
+          }
+          #logoff{
+            margin-left:10px;
+          } 
+          #chatter{
+              margin:20px;
+          }
+      </style>
+      <script type="text/javascript">
+          io= io.connect();
+
+          $(document).ready(function(){
+              io.emit('get_users');
+          });
+          io.on('all_users',function(data){
+
+             for(var key in data.users)
+             {
+                if(key!=data.uID)
+                {
+                    $('#chatter').append("<div id="+key+" class='ubox'><p id='uname' class='user_title'>"+data.users[key]+" says: </p><p id='message'></p></div>");
+                    $('#'+key).addClass('ubox');
+               }
+             }
+          });
+         
+          io.on('nusers',function(data)
+          {
+             $('#chatter').append("<div id="+data.userID+" class='ubox'><p id='uname' class='user_title'>"+data.name+" says: </p><p id='message'></p></div>");
+               $('#'+data.userID).addClass('ubox');
+          });
+          $(document).on('click','#msubmit',function(){
+               message = $('#umessage').val();
+               io.emit('message',{new_message:message}); 
+              return false;  
+          });
+          io.on('new_message',function(data){
+            $("#"+data.uID).find('#message').text(data.message);
+          });
+          io.on('delete_user',function(data){
+            $("#"+data.user_id).fadeOut();
+          });
+
+      </script>
+  </head>
+  <body>
+    <h1>Ultra Chat</h1>
+    <a id='logoff' href="/logoff">Logoff</a>
+    <div id="<%=uID %>" class='current_user'>
+        <p class='user_title'><%=name%> says:</p>
+        <p id='message'></p>
+        <form>
+          <textarea id='umessage' name='message' placeholder='Enter Message'></textarea>
+          <input type='submit' value='Submit' id='msubmit' class='btn btn-info'>
+        </form>
+    </div>
+    <div id='chatter'>
+
+
+
+
+    </div>
+
+
+  </body>
+</html>
